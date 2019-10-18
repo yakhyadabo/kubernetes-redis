@@ -1,0 +1,2 @@
+== Deploying Redis in Openshift with TLS enabled
+
