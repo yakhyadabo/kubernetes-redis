@@ -1,2 +1,4 @@
-== Deploying Redis in Openshift with TLS enabled
+== Deploying Redis in Kubertes with TLS enabled
+
+
 
