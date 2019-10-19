@@ -23,21 +23,21 @@ spec:
         - containerPort: 16380
           name: gossip
         env:
-        - name: REDIS_PORT_6379_TCP_ADDR 
-          value: "127.0.0.1"
-        - name: REDIS_PORT_6379_TCP_PORT
-          value: "6379"
+        ## - name: REDIS_PORT_6379_TCP_ADDR 
+        ##   value: "127.0.0.1"
+        ## - name: REDIS_PORT_6379_TCP_PORT
+        ##   value: "6379"
         volumeMounts:
-        - name: tls
+        - name: stunnel-tls
           mountPath: /etc/stunnel/private.pem
           subPath: rediscert.pem
-        name: stunnel-conf
+        - name: stunnel-conf
           mountPath: /etc/stunnel/stunnel.conf
           subPath: stunnel.conf
         - name: stunnel-pid
           mountPath: /stunnel
         command: ["/bin/sh"]
-        args: ["-c", "ls -l /etc/stunnel; less /etc/stunnel/stunnel.conf; stunnel4 /etc/stunnel/stunnel.conf"]
+        args: ["-c", "ls -l /etc/stunnel; stunnel4 /etc/stunnel/stunnel.conf"]
       - name: redis
         image: redis:5.0.1-alpine
        # ports:
@@ -63,7 +63,7 @@ spec:
         configMap:
           name: redis
           defaultMode: 0755
-      - name: tls
+      - name: stunnel-tls
         secret:
           secretName: redis
           defaultMode: 0755
