@@ -1,47 +1,69 @@
 == Deploying Redis in Kubernetes with TLS enabled
 
+[source,shell]
+----
 cfssl gencert \
     -ca=certs/ca.pem \
     -ca-key=certs/ca-key.pem \
     -config=certs/config/ca-config.json \
     -profile=default \
     certs/config/redis-csr.json | cfssljson -bare certs/redis
+----
 
 
+
+[source,shell]
+----
 cat certs/{redis-key.pem,redis.pem} > certs/rediscert.pem
+----
 
+[source,shell]
+----
 oc create secret generic redis \                                              
     --from-file=certs/ca.pem \
     --from-file=certs/redis.pem \
     --from-file=certs/redis-key.pem \
     --from-file=certs/rediscert.pem
+----
 
 
 
+[source,shell]
+----
 oc create configmap stunnel --from-file=config/stunnel.conf
 
 oc create configmap redis \
     --from-file=config/redis.conf \
     --from-file=script/update-node.sh
+----
 
 
 redis client : 
+[source,shell]
+----
 wget -P /tmp http://download.redis.io/redis-stable.tar.gz
 
 tar xvzf /tmp/redis-stable.tar.gz -C /tmp
 cd /tmp/redis-stable
 make redis-cli
 sudo cp src/redis-cli /usr/local/bin/
+----
 
 
 Stunnel : 
+[source,shell]
+----
 sudo apt-get install stunnel
 sudo netstat -tulnp | grep -i stunnel
+----
 
 
 
 
 Port forwarding 
+[source,shell]
+----
 oc port-forward redis-0 6380:6380
+----
 
 
