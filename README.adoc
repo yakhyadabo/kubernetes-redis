@@ -1,5 +1,20 @@
 == Deploying Redis in Kubernetes with TLS enabled
 
+== Requirements : 
+
+ - oc client
+ - redis 1....
+ - cfssl
+ - stunnel
+
+Install cfssl
+
+[source,shell]
+----
+apt get install openssl golang-cfssl
+----
+
+
 [source,shell]
 ----
 cfssl gencert \
@@ -57,7 +72,24 @@ sudo apt-get install stunnel
 sudo netstat -tulnp | grep -i stunnel
 ----
 
+[source,shell]
+----
+vi /etc/stunnel/redis-cli.conf
 
+ips = no                                                                                                                                                                                                   
+setuid = root                  
+setgid = root                  
+pid = /var/run/stunnel.pid
+debug = 7                      
+delay = yes                    
+options = NO_SSLv2             
+options = NO_SSLv3             
+[redis-cli]
+   client = yes                
+   accept = 127.0.0.1:6379     
+   connect = 127.0.0.1:6380
+   CAfile=/path/to/ca/ca.pem
+---
 
 
 Port forwarding 
